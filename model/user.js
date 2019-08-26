@@ -12,7 +12,7 @@ const userSchema = new Schema(
       required: true
     },
     token: {
-      type: Number,
+      type: String,
       required: false
     }
   },

@@ -4,6 +4,7 @@ const Director = require("../model/director");
 const User = require("../model/user");
 const moment = require("moment");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 module.exports = {
   login: async function({ userInput }, req) {
@@ -19,14 +20,64 @@ module.exports = {
       error.code = 401;
       throw error;
     }
+    user.token = jwt.sign(
+      {
+        password: user.password
+      },
+      "C0mPl3x1tY",
+      { expiresIn: 180 }
+    );
+    const loggedInUser = await user.save();
+    return {
+      ...loggedInUser._doc,
+      id: loggedInUser._id.toString(),
+      createdAt: loggedInUser.createdAt.toISOString(),
+      updatedAt: loggedInUser.updatedAt.toISOString()
+    };
     //Needs to create a token and save the user.
   },
   movies: async function(req) {
+    let verified;
     const totalMovies = await Movie.find().countDocuments();
     const movies = await Movie.find()
       .sort({ createdAt: -1 })
       .populate("actors")
       .populate("directors");
+
+    const user = await User.findOne().sort({ updatedAt: -1 });
+    if (user.token !== "") {
+      try {
+        verified = jwt.verify(user.token, "C0mPl3x1tY");
+      } catch (err) {
+        return {
+          movies: movies.map(m => {
+            return {
+              ...m._doc,
+              _id: m._id.toString(),
+              createdAt: m.createdAt.toISOString(),
+              updatedAt: m.updatedAt.toISOString()
+            };
+          }),
+          totalMovies: totalMovies
+        };
+      }
+      if (verified) {
+        return {
+          movies: movies.map(m => {
+            const random = Math.floor(Math.random() * (10 - 5)) + 5;
+            return {
+              ...m._doc,
+              scoutbase_rating: random,
+              _id: m._id.toString(),
+              createdAt: m.createdAt.toISOString(),
+              updatedAt: m.updatedAt.toISOString()
+            };
+          }),
+          totalMovies: totalMovies
+        };
+      }
+    }
+
     return {
       movies: movies.map(m => {
         return {
@@ -139,7 +190,8 @@ module.exports = {
 
     const user = new User({
       username: userInput.username,
-      password: pass
+      password: pass,
+      token: ""
     });
 
     const createdUser = await user.save();

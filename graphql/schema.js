@@ -33,6 +33,7 @@ type Director {
 
 type Movie {
     _id: ID!
+    scoutbase_rating: Int
     title: String!
     year: String!
     rating: Int!
