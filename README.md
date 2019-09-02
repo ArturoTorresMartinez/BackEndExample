@@ -1,22 +1,83 @@
-# Code Challenge for Scoutbase
+# Back-end task of Code Challenge for Scoutbase
 
-If you’re reading this, then you’ve applied for a position at Scoutbase.
+This task is for demonstrating your understanding of HTTP, GraphQL, Node.js and general API practices.
 
-This directory includes two subdirectories:
+Instructions:
 
-- `front-end` with focus on React, SSR, Apollo & `styled-components`
-- `back-end` with focus on SQL, Node.js, GraphQL
+1. Implement a Node.js-based server with raw `http`, Koa or **Express**.
+2. Add a `/graphql` endpoint serving the apollo-server or any other GraphQL implementation.
+3. Schema must be able to return proper response for the following public query:
 
-You can do one or you can do two.
+**NOTE:** You may notice I moved "directors" outside of "actors", this was intentional as I believe they belong to Movies and not to Actors
+```graphql
+{
+  movies {
+    title
+    year
+    rating
+    actors {
+      name
+      birthday
+      country
+    }
+    directors {
+        name
+        birthday
+        country
+      }
+  }
+}
+```
 
-## Instructions
+4. Add support for the following mutation:
+```graphql
+mutation {
+  createUser(userInput: {username: "Username", password: "password"}) {
+    _id
+    username
+    password
+    token
+    createdAt
+    updatedAt
+  }
+}
+```
 
-You have received this directory within the .zip archive.
+5. To expand on the number four, add a mutation-based authentication that accepts:
+```graphql
+mutation {
+  login(userInput: {username: "Username", password: "password"}) {
+    _id
+    username
+    password
+    token
+    createdAt
+    updatedAt
+  }
+}
+```
 
-1. Create a repo out of the directory with this `README.md` in the root of it.
-2. Work on either task following the guidelines in `README.md` within chosen directory.
-3. Follow best practices of saving changes to the repo.
-4. Upload the repo to your personal Github account and share it with two collaborators:
-  1. `Yaass` username – Yassin Askar, co-founder of Scoutbase
-  2. `kuka` username – Kuanysh, consultant
-5. Expect a response within 10 working days after sharing the task, you’ll be contacted with the info you’ve provided during initial registration.
+6. Authenticated users may request additional fields for the query used earlier. New `scoutbase_rating` field must return the a random string between 5.0-9.0:
+
+**NOTE:** "scoutbase_rating" is always available but will only return the rating if a user (any) has logged-in in the last 3 minutes, else it returns null
+```graphql
+{
+  movies {
+    movies {
+      _id
+      scoutbase_rating
+      title
+      year
+      rating
+      actors{ _id name birthday country createdAt updatedAt}
+      directors{ _id name birthday country createdAt updatedAt}
+      createdAt
+      updatedAt
+    }
+  }
+}
+```
+
+7. `/graphql` must be accessible for external clients.
+
+8. End.
