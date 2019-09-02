@@ -40,7 +40,7 @@ app.use((error, req, res, next) => {
 });
 
 const MONGODB_URI =
-  "mongodb+srv://arthur:poq7283ipod@cluster0-e7jon.mongodb.net/scout?retryWrites=true";
+  "mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@cluster0-e7jon.mongodb.net/${process.env.MONGO_DB}?retryWrites=true";
 mongoose
   .connect(MONGODB_URI, { useFindAndModify: false, useNewUrlParser: true })
   .then(result => {
