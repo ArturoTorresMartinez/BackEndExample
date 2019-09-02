@@ -4,7 +4,7 @@ This task is for demonstrating your understanding of HTTP, GraphQL, Node.js and 
 
 Instructions:
 
-1. Implement a Node.js-based server with raw `http`, Koa or **Express**.
+1. Implement a Node.js-based server with raw `http`, Koa or **Express**. Go here -> https://scout-base.herokuapp.com/graphql 
 2. Add a `/graphql` endpoint serving the apollo-server or any other GraphQL implementation.
 3. Schema must be able to return proper response for the following public query:
 
